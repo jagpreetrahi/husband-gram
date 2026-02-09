@@ -13,6 +13,7 @@
     "@aws-sdk/client-bedrock-runtime": "^3.975.0",
     "aws-amplify": "^6.16.0",
     "elevenlabs": "^1.59.0",
+    "groq-sdk": "^0.37.0",
     "lucide-react": "^0.563.0",
     "next": "16.1.4",
     "react": "19.2.3",

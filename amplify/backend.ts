@@ -1,7 +1,7 @@
 import { defineBackend } from '@aws-amplify/backend';
 import { sendMMS } from './functions/sendMMS/resource'
 import { FunctionUrlAuthType, HttpMethod } from 'aws-cdk-lib/aws-lambda';
-import { husbandToBokify } from './functions/husband-to-bookify/resource';
+import { husbandToBookify } from './functions/husband-to-bookify/resource';
 import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { textToSpeech } from './functions/text-to-speech/resource';
 import { husbandAudioTrigger } from './functions/husband-audio-trigger/resource';
@@ -21,7 +21,7 @@ import {
 const backend = defineBackend({
   auth,
   storage,
-  husbandToBokify,
+  husbandToBookify,
   textToSpeech,
   husbandAudioTrigger,
   sendMMS
@@ -50,7 +50,7 @@ new ChannelNamespace(backend.stack, 'audioChannel', {
 
 
 // add a policy statement to the husbandToBookify lamba function
-backend.husbandToBokify.resources.lambda.addToRolePolicy(
+backend.husbandToBookify.resources.lambda.addToRolePolicy(
   new PolicyStatement({
     actions: ['bedrock:InvokeModel'],
     resources: [
@@ -61,7 +61,7 @@ backend.husbandToBokify.resources.lambda.addToRolePolicy(
 
 // add function url to the lamba function
 const husbandToBookifyFurl  = 
-  backend.husbandToBokify.resources.lambda.addFunctionUrl({
+  backend.husbandToBookify.resources.lambda.addFunctionUrl({
     authType: FunctionUrlAuthType.NONE,
     cors: {
       allowedOrigins: ['*'],
@@ -106,7 +106,7 @@ backend.husbandAudioTrigger.addEnvironment(
 // add output to the backend to frontend
 backend.addOutput({
   custom: {
-     husbandToBokifyUrl: husbandToBookifyFurl.url,
+     husbandToBookifyUrl: husbandToBookifyFurl.url,
      textToSpeechUrl: textToSpeechURl.url,
      sendMMSUrl: sendMMSURl.url,
      events: {

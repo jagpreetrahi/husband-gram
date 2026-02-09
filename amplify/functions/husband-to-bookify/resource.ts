@@ -1,11 +1,13 @@
 import { defineFunction } from "@aws-amplify/backend";
 
-export const husbandToBokify = defineFunction({
+export const husbandToBookify = defineFunction({ 
     name: 'husband-to-bookify',
     entry: './main.ts',
     memoryMB: 1024,
     timeoutSeconds: 30,
     environment : {
-        MODEL_ID: 'anthropic.claude-3-5-haiku-20241022-v1:0'
+        AI_Provider: 'groq',
+        GROQ_API_KEY: process.env.GROQ_API_KEY!,
+        MODEL_ID: process.env.MODEL_ID!
     }
 })

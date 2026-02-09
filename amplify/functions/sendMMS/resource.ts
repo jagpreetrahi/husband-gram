@@ -6,7 +6,5 @@ export const sendMMS = defineFunction({
     resourceGroupName: 'data',
     runtime: 22,
     memoryMB: 512,
-    environment: {
-        TWILIO_API_KEY: secret('TWILIO_API_KEY'),
-    }
+    
 })

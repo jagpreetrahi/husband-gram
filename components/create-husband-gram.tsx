@@ -6,29 +6,55 @@ import { events, EventsChannel } from "aws-amplify/api";
 
 export const CreateHusbandGramPage =  () => {
 
-    const [genre, setGenre]  = useState("");
+    const [interest, setInterest]  = useState("");
+    const [subInterest, setSubInterest]  = useState("");
     const [question , setQuestion ]  = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [response, setResponse] = useState("");
     const [isSpicy, setIsSpicy] = useState(false);
     const [audioUrl, setAudioUrl] = useState<string | null>(null);
 
-    const bookGenres = [
-        "Romance",
-        "Mystery",
-        "Thriller",
-        "Science Fiction",
-        "Fantasy",
-        "Historical Fiction",
-        "Biography",
-        "Self-Help",
-        "Literary Fiction",
-        "Young Adult",
-        "Poetry",
-        "Horror",
-        "Memoir",
-        "Classics",
-        "Contemporary Fiction",
+    const userInterests = [
+      {
+        "interest" : "Entertainment & Media",
+        "sub-inteset" : ["Streaming TV series",  "Watching Movies", "Going to the Cinema"]
+      },
+      {
+        "interest" :  "Socialising & Relationship",
+        "sub-inteset" : [ "Spending time with family", "Hanging out with friends", "Visiting partners", "Networking"]
+      },
+      {
+        "interest" : "Culinary Arts & Dining",
+        "sub-inteset" : [ "Cooking", "Baking", "Eating out at restaurants", "Trying new cuisines", "Coffee culture"]
+      },
+      {
+        "interest" :   "Travel & Exploration",
+        "sub-inteset" : ["Road trips", "sightseeing", "visiting historical sites", "international vacations", "hiking/nature"]
+      },
+      {
+        "interest" :   "Music & Live Events",
+        "sub-inteset" : ["Attending concerts", "listening to music, festivals", "playing musical instruments"]
+      },
+      {
+        "interest" :  "Technology & Digital Life",
+        "sub-inteset" : ["Social media", "smartphone apps", "video games", "gaming", "PC building", "tech news"]
+      },
+      {
+        "interest" :  "Health & Fitness",
+        "sub-inteset" : ["Walking", "gym workouts", "yoga", "running", "cycling", "meditation"]
+      },
+      {
+        "interest" : "Personal Development & Learning",
+        "sub-inteset" : ["Reading books", "listening to podcasts", "learning new languages", "online courses"]
+      },
+      {
+        "interest" : "Hobbies & Collecting",
+        "sub-inteset" : ["Gardening", "photography", "DIY projects", "arts & crafts", "collecting items"]
+      },
+      {
+        "interest" :     "Fashion & Beauty",
+        "sub-inteset" : [ "Shopping", "makeup", "clothing trends", "influencer style", "personal styling"]
+      },
     ]
 
     useEffect(() => {
@@ -64,22 +90,24 @@ export const CreateHusbandGramPage =  () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
 
-        if(!genre || !question) return 
+        if(!question || !interest || !subInterest) return 
 
         setIsSubmitting(true);
 
         try {
-            const response = await fetch('https://6rnyhn4y2wil43poryjgkxssne0dnalo.lambda-url.us-east-1.on.aws/', {
+            const response = await fetch('https://ozffxhlxoyd3zpv3p3g6kuav440geapx.lambda-url.ap-south-1.on.aws/', {
                 method: 'POST',
                 headers : {
-                    'Content-Type': 'application/json'
+                  'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    genre,
+                    interest,
+                    subInterest,
                     question,
                     isSpicy
                 })
             })
+            console.log("the response is ", response)
             if(!response.ok){
                 throw new Error('Network response was not ok');
             }
@@ -94,7 +122,7 @@ export const CreateHusbandGramPage =  () => {
     }
 
     async function convertTextToAudio(text: string) {
-        await fetch("https://46jhnst4nutb7g5xlfmt7jvwq40xkjwm.lambda-url.us-east-1.on.aws/", {
+        await fetch("https://ythhxqpcarbgtkiy47keuwkn340iknqn.lambda-url.ap-south-1.on.aws/", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -104,7 +132,7 @@ export const CreateHusbandGramPage =  () => {
     }
 
     async function sendMMToWife(mp3url: string) {
-        await fetch("", {
+        await fetch("https://he6urkcaeuv2ij3bj5unirzkum0bdckk.lambda-url.ap-south-1.on.aws/", {
             method: "POST",
             headers: {
                 "Content-Type" : "application/json",
@@ -113,6 +141,10 @@ export const CreateHusbandGramPage =  () => {
         })
     }
 
+    const selectedInterest = userInterests.find(
+      (item) => item.interest === interest
+    )
+    
       return (
       <div className="min-h-screen bg-linear-to-b from-purple-50 to-white">
         <header className="container mx-auto px-4 py-6">
@@ -143,21 +175,50 @@ export const CreateHusbandGramPage =  () => {
                     Select Book Genre
                   </label>
                   <select
-                    id="genre"
-                    value={genre}
-                    onChange={(e) => setGenre(e.target.value)}
+                    id="interest"
+                    value={interest}
+                    onChange={(e) => {
+                      setInterest(e.target.value);
+                      setSubInterest("")
+                    }}
                     className="w-full rounded-lg border border-purple-200 bg-white px-4 py-2 text-purple-900 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200"
                     required
                   >
                     <option value="" disabled>
-                      Select a genre
+                      Select a Interest
                     </option>
-                    {bookGenres.map((bookGenre) => (
-                      <option key={bookGenre} value={bookGenre}>
-                        {bookGenre}
+                    {userInterests.map((item) => (
+                      <option key={item.interest} value={item.interest}>
+                        {item.interest}
                       </option>
                     ))}
+                    
                   </select>
+                  <label htmlFor="genre" className="mb-2 mt-4  block text-sm font-medium text-purple-900">
+                    Select Sub-Interest
+                  </label>
+                   <select
+                    id="sub-interest"
+                    value={subInterest}
+                    onChange={(e) => {
+                      setSubInterest(e.target.value);
+                    }}
+                    
+                    className="w-full rounded-lg border border-purple-200 bg-white px-4 py-2 text-purple-900 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200"
+                    required
+                  >
+                    <option value="" disabled>
+                      Select a Sub-Interest
+                    </option>
+                    {selectedInterest?.["sub-inteset"].map((sub)=> (
+                      <option key={sub} value={sub}>
+                        {sub}
+                      </option>
+                    ))}
+                    
+                  </select>
+
+                  
                 </div>
   
                 <div>
@@ -189,7 +250,7 @@ export const CreateHusbandGramPage =  () => {
   
                 <button
                   type="submit"
-                  disabled={isSubmitting || !genre || !question}
+                  disabled={isSubmitting || !interest || !subInterest || !question}
                   className="flex w-full items-center justify-center gap-2 rounded-full bg-purple-600 px-6 py-3 font-semibold text-white shadow-md transition-all hover:bg-purple-700 hover:shadow-lg disabled:opacity-70"
                 >
                   {isSubmitting ? (

@@ -1,24 +1,36 @@
-import twilio from 'twilio'
 import { env } from '$amplify/env/sendMMS'
-import { twilioSID, twilioPhoneNumber, myNumber } from './utils';
+import { CfnPhoneNumber } from 'aws-cdk-lib/aws-connect'
+
 
 export const handler = async (event: { body: string}) => {
-    const { mp3URL } = JSON.parse(event.body)
-    const twilioClient = twilio(twilioSID, env.TWILIO_API_KEY)
-
-    const messageBody = 'Your someone has a question for your'
-
+    const { mp3URL , phone} = JSON.parse(event.body)
+    
     try {
-        const message = await twilioClient.messages.create({
-            body: messageBody,
-            from: twilioPhoneNumber,
-            to: myNumber,
-            mediaUrl: mp3URL
-        })
-        return {
-            message: 'MMS sent successfully',
-            messageId: message.sid
-        }
+       const response = await fetch('https://api.gupshup.io/wa/api/v1/msg', {
+            method: "POST",
+            headers: {
+                "Content-Type" : "application/x-www-form-urlencoded ",
+                apikey: process.env.GUPSHUP_API_KEY!,
+            },
+            body: new URLSearchParams({
+                channel: 'whatsapp',
+                source: process.env.GUPSHUP_SOURCE_NUMBER!,
+                destination: phone.replace('+', ''), // Gupshup expects no +
+                message: JSON.stringify({
+                    type: 'audio',
+                    audio: {
+                    url:  mp3URL
+                    }  
+                }),
+                'src.name': process.env.GUPSHUP_APP_NAME!,
+            }),
+       })
+       const data = await response.json();
+       return {
+          statusCode: 200,
+          body: JSON.stringify({ success: true, gupshupResponse: data}),
+
+       }
     } catch(error) {
         console.error(error)
         return {
